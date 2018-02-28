@@ -1,10 +1,20 @@
-import os
 import sys
 import requests
-import re
+import subprocess
 import json
 from bs4 import BeautifulSoup
-import subprocess
+from os import path
+from re import findall
+from datetime import datetime
+
+
+def cosmetic(func_name):
+    def wrapper(*arg, **kwarg):
+        print('Started {}'.format(func_name.__name__))
+        a = func_name(*arg, **kwarg)
+        print('Finished {}'.format(func_name.__name__))
+        return a
+    return wrapper
 
 
 class Tasks:
@@ -41,6 +51,16 @@ class Tasks:
         return ret
 
     @staticmethod
+    def get_file_log_content(path_to_log):
+        content = None
+        if path.isfile(path_to_log):
+            with open(path_to_log, 'r') as fd:
+                content = fd.readlines()
+        return content
+
+
+    @staticmethod
+    @cosmetic
     def task1(url):
         """
         Collect links from a internet page to json format
@@ -56,6 +76,7 @@ class Tasks:
         with open('result.json', 'w') as fp:
             json.dump(ret, fp, indent=4)
 
+    @cosmetic
     def task2(self):
         """
         Get formated output of command 'netstat -a -o' in case windows
@@ -88,11 +109,61 @@ class Tasks:
                 files_count = len(self.execute(cmd_tmplt.format(pid=pid)).get('output')[1:])
                 print(output_tmplt.format(pid, files_count))
 
-    def task3(self):
+    @cosmetic
+    def task3(self, path_to_log):
         """
-        Parse log for time of requests
+        Parse a log file for requests, them time, and errors
         :return: None
         """
 
+        info = {}
+        errors = {}
+
+        format_tmpl = '[%Y-%m-%d %H:%M:%S.%f] INFO {state} processing of >Request {num}<'
+        output_tmlt = 'Request {number}: {content}'
+
+        log_content = self.get_file_log_content(path_to_log)
+
+        if not log_content:
+            raise FileNotFoundError('Error on loading log file, can\'t proceed further' )
+
+        # get all requests numbers from log as set
+        requests_set = {int(line.strip().split()[-1].strip('<')) for line in log_content}
+
+        # fill info and error dicts with content:
+        #  info - request <number>:  <execution time> if it has 'Finished' status or <start time> else
+        #  errors - request <number>:  <error type>
+        for lin in log_content:
+            for _ in requests_set:
+                lin = lin.strip()
+                req = '>Request {}<'.format(_)
+                if ' Started ' in lin and req in lin:
+                    frmt = format_tmpl.format(state='Started', num=_)
+                    started = datetime.strptime(lin, frmt)
+                    info[_] = started
+                if ' Finished ' in lin and req in lin:
+                    frmt = format_tmpl.format(state='Finished', num=_)
+                    finished = datetime.strptime(lin, frmt)
+                    info[_] = finished - info.get(_)
+                if ' ERROR ' in lin and req in lin:
+                    errors[_] = ' '.join(findall(r'ERROR (.+) for', lin))
+
+        # output result
+        print('\nParsing results: ')
+        for k, v in info.items():
+            # Change request value to -1  if it is not finished ergo has only starttime
+            if ' ' in str(v):
+                v = '-1'
+            print(output_tmlt.format(number=k, content=v))
+        print('\nErrors:')
+        for k, v in errors.items():
+            print(output_tmlt.format(number=k, content=v))
+
 if __name__ == '__main__':
-    Tasks().task1('http://mail.ru')
+    url = 'http://mail.ru'
+    log = path.join(path.dirname(__file__), 'example.log')
+
+    tasks = Tasks()
+    tasks.task1(url)
+    tasks.task2()
+    tasks.task3(log)
