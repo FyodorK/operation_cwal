@@ -161,9 +161,9 @@ class Tasks:
 
 if __name__ == '__main__':
     url = 'http://mail.ru'
+
     log = path.join(path.dirname(__file__), 'example.log')
 
     tasks = Tasks()
-    tasks.task1(url)
-    tasks.task2()
-    tasks.task3(log)
+
+
