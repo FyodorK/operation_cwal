@@ -1,0 +1,5 @@
+{
+  "test_manage_app.py::TestCreateUser": true,
+  "test_manage_app.py::TestDbPreparation": true,
+  "test_manage_app.py::TestTeamReport": true
+}

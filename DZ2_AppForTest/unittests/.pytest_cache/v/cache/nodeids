@@ -1,0 +1,6 @@
+[
+  "test_manage_app.py::TestDbPreparation::test_wipe_db",
+  "test_manage_app.py::TestCreateUser::test_add_user",
+  "test_manage_app.py::TestTeamReport::test_add_user",
+  "test_manage_app.py::TestTeamReport::test_get_pdf_report"
+]
