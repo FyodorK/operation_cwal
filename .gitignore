@@ -1,3 +1,6 @@
 .idea
+*/.idea
 result.json
+*/venv/*
+venv/*
 
