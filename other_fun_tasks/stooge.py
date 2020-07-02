@@ -1,3 +1,8 @@
+"""
+Fun task for Auriga New Year challenge :)
+"""
+
+
 def check_string(item):
     if item.count("O") != item.count("="):
         raise Exception("There are one or more halved children in you input")
