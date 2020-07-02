@@ -5,7 +5,6 @@ from os import path, makedirs
 import wget
 
 
-
 class Crawler:
     """
     Class for crawl by page ulr-like 'http(s)://page_path/page_name_{number}/ and download pictures

@@ -7,6 +7,11 @@ from os import path
 from re import findall
 from datetime import datetime
 
+"""
+Auriga tasks for tests automation course
+ 
+"""
+
 
 def cosmetic(func_name):
     def wrapper(*arg, **kwarg):
@@ -162,7 +167,7 @@ class Tasks:
 if __name__ == '__main__':
     url = 'http://mail.ru'
 
-    log = path.join(path.dirname(__file__), 'example.log')
+    log = path.join(path.dirname(__file__), 'DZ1_samples.log')
 
     tasks = Tasks()
 

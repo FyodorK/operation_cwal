@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>App one</title>
+    <link rel="stylesheet" href='{% static "css/style1.css" %}'>
+</head>
+<body>
+    <h1> Here goes application </h1>
+    <h2> Access records: </h2>
+
+    <div class="django__">
+    {% if insert_me %}
+        <table>
+            <thead>
+            <th>Site Name</th>
+            <th>Date Accessed</th>
+            </thead>
+        {% for item in insert_me %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.date }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+        {% else %}
+            <p> NO DATA AVAILABLE </p>
+        {% endif %}
+
+    </div>
+</body>
+</html>
